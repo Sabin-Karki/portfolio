@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sabin Karki</title>
+  <meta name="description" content="Full-stack developer based in Nepal. I build things properly.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="wipe"></div>
+  <div id="cur-dot"></div>
+  <div id="cur-ring"></div>
+  <div id="scroll-prog"></div>
+
+  <nav id="nav">
+    <a href="#" class="nav-name">sabin<span>.</span></a>
+    <div class="nav-r">
+      <a href="#about" class="nav-link">about</a>
+      <a href="#projects" class="nav-link">projects</a>
+      <a href="#contact" class="nav-link">contact</a>
+      <button class="theme-btn" id="theme-btn" aria-label="toggle theme">◑</button>
+    </div>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <section id="hero">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-wrap">
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot dot-r"></div>
+          <div class="dot dot-y"></div>
+          <div class="dot dot-g"></div>
+          <span class="term-title">sabin@workshop ~ zsh</span>
+        </div>
+        <div class="terminal-body" id="term-body"></div>
+      </div>
+      <p class="hero-tagline">
+        currently somewhere in Nepal, writing Java and occasionally questioning my life choices
+      </p>
+    </div>
+  </section>
+
+  <!-- ── TICKER ── -->
+  <div class="ticker-section">
+    <div class="ticker-track">
+      <div class="ti">Spring Boot</div><div class="ti">React</div><div class="ti">TypeScript</div><div class="ti">PostgreSQL</div><div class="ti">JWT</div><div class="ti">Docker</div><div class="ti">pgvector</div><div class="ti">JPA</div><div class="ti">Gemini API</div><div class="ti">Mockito</div><div class="ti">Apache Tika</div><div class="ti">Tailwind</div>
+      <div class="ti">Spring Boot</div><div class="ti">React</div><div class="ti">TypeScript</div><div class="ti">PostgreSQL</div><div class="ti">JWT</div><div class="ti">Docker</div><div class="ti">pgvector</div><div class="ti">JPA</div><div class="ti">Gemini API</div><div class="ti">Mockito</div><div class="ti">Apache Tika</div><div class="ti">Tailwind</div>
+    </div>
+  </div>
+
+  <!-- ── ABOUT ── -->
+  <section id="about">
+    <div class="about-layout">
+      <div>
+        <div class="sec-eyebrow rev">About</div>
+        <div class="about-body rev">
+          <p>
+            I'm a full-stack developer who got into this because I actually enjoy it — which I realize sounds obvious, but apparently isn't. I like the part where you figure out <strong>why</strong> something should be built a certain way, not just <em>how</em>.
+          </p>
+          <p>
+            My backend is Java and Spring Boot. My frontend is React and TypeScript. I've containerized things with Docker, set up JWT auth properly, designed normalized schemas, and wired in vector search before most people in my area knew what pgvector was. I test my code. I use Mockito.
+          </p>
+          <p>
+            I'm doing my BCA at Nepathya College in Butwal. Graduating 2026. I build projects beyond what class asks for because that's where you actually learn stuff.
+          </p>
+        </div>
+      </div>
+      <div class="about-sidebar rev">
+        <div class="note-card">
+          <div class="note-label">currently</div>
+          <div class="note-content">
+            working on things.<br>
+            <strong>open to work</strong> — internships, junior roles, freelance.
+          </div>
+        </div>
+        <div>
+          <div class="stack-label">Backend</div>
+          <div class="pills">
+            <span class="pill">Java</span>
+            <span class="pill">Spring Boot</span>
+            <span class="pill">Spring Security</span>
+            <span class="pill">JPA</span>
+            <span class="pill">PostgreSQL</span>
+            <span class="pill">MySQL</span>
+          </div>
+        </div>
+        <div>
+          <div class="stack-label">Frontend</div>
+          <div class="pills">
+            <span class="pill">React</span>
+            <span class="pill">TypeScript</span>
+            <span class="pill">Tailwind CSS</span>
+            <span class="pill">Zustand</span>
+          </div>
+        </div>
+        <div>
+          <div class="stack-label">Tooling</div>
+          <div class="pills">
+            <span class="pill">Docker</span>
+            <span class="pill">Maven</span>
+            <span class="pill">Git</span>
+            <span class="pill">Postman</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PROJECTS ── -->
+  <section id="projects">
+    <div class="inner">
+      <div class="sec-eyebrow rev">Projects</div>
+      <div class="board">
+
+        <div class="card rev">
+          <div class="card-num">01</div>
+          <div class="card-title">MindSpace</div>
+          <div class="card-stack">Spring Boot · React · TypeScript · Docker</div>
+          <p class="card-desc">
+            Students upload their documents and have actual conversations with them. I used pgvector for semantic search so it finds genuinely relevant context, not just keyword matches. Gemini generates the flashcards. JWT keeps everyone's stuff isolated.
+          </p>
+          <div class="card-tags">
+            <span class="ctag">RAG</span>
+            <span class="ctag">pgvector</span>
+            <span class="ctag">Gemini API</span>
+            <span class="ctag">Apache Tika</span>
+          </div>
+          <a href="https://github.com/Sabin-Karki/MindSpace" target="_blank" class="card-link">
+            View on GitHub
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 10L10 1M10 1H3.5M10 1V7.5" stroke="currentColor" stroke-width="1.2"/></svg>
+          </a>
+        </div>
+
+        <div class="card rev">
+          <div class="card-num">02</div>
+          <div class="card-title">Finance Tracker</div>
+          <div class="card-stack">Spring Boot · React · Tailwind · Docker</div>
+          <p class="card-desc">
+            Track money in, money out, and where it all went. The schema is properly normalized with foreign keys between users, transactions, and budgets. Nothing lands in the database without validation. Each user only ever sees their own data.
+          </p>
+          <div class="card-tags">
+            <span class="ctag">REST API</span>
+            <span class="ctag">Spring Security</span>
+            <span class="ctag">CRUD</span>
+          </div>
+          <a href="https://github.com/Sabin-Karki/Finance-Tracker" target="_blank" class="card-link">
+            View on GitHub
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 10L10 1M10 1H3.5M10 1V7.5" stroke="currentColor" stroke-width="1.2"/></svg>
+          </a>
+        </div>
+
+        <div class="card rev">
+          <div class="card-num">03</div>
+          <div class="card-title">MediFlow</div>
+          <div class="card-stack">Spring Boot · Spring Data JPA · PostgreSQL</div>
+          <p class="card-desc">
+            Hospital CSV formats are a mess — different headers, inconsistent fields, all of it. MediFlow handles that async, without blocking anything. Strategy pattern lets you add new record types without touching existing code. Tested properly with JUnit.
+          </p>
+          <div class="card-tags">
+            <span class="ctag">Async</span>
+            <span class="ctag">Strategy Pattern</span>
+            <span class="ctag">JUnit · Mockito</span>
+          </div>
+          <a href="https://github.com/Sabin-Karki/MediFlow" target="_blank" class="card-link">
+            View on GitHub
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 10L10 1M10 1H3.5M10 1V7.5" stroke="currentColor" stroke-width="1.2"/></svg>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CONTACT ── -->
+  <section id="contact">
+    <div class="contact-layout">
+      <div class="contact-left rev">
+        <div class="contact-big">
+          Let's make<br>something<br><em>real.</em>
+        </div>
+        <p class="contact-sub">
+          If you're working on something interesting and you need a backend that doesn't fall apart or a frontend that doesn't look like a template — reach out.
+        </p>
+        <div class="contact-links">
+          <a href="mailto:sabinkarki064@gmail.com" class="cl">
+            <div>
+              <div class="cl-label">Email</div>
+              <div class="cl-val">sabinkarki064@gmail.com</div>
+            </div>
+            <span class="cl-arrow">↗</span>
+          </a>
+          <a href="https://github.com/Sabin-Karki" target="_blank" class="cl">
+            <div>
+              <div class="cl-label">GitHub</div>
+              <div class="cl-val">github.com/Sabin-Karki</div>
+            </div>
+            <span class="cl-arrow">↗</span>
+          </a>
+          <a href="https://linkedin.com/in/sabinkarki77" target="_blank" class="cl">
+            <div>
+              <div class="cl-label">LinkedIn</div>
+              <div class="cl-val">in/sabinkarki77</div>
+            </div>
+            <span class="cl-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+      <div class="contact-facts rev">
+        <div class="fact-group">
+          <div class="fact-label">Based in</div>
+          <div class="fact-val">Nepal</div>
+        </div>
+        <div class="fact-group">
+          <div class="fact-label">Education</div>
+          <div class="fact-val">BCA, Nepathya College<br>Butwal — 2026</div>
+        </div>
+        <div class="fact-group">
+          <div class="fact-label">Availability</div>
+          <div class="fact-val">Open to work</div>
+        </div>
+        <div class="fact-group">
+          <div class="fact-label">Timezone</div>
+          <div class="fact-val">NPT (UTC +5:45)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span class="foot-sig">sabin<span>.</span>pages.dev</span>
+    <span class="foot-ts" id="foot-ts"></span>
+    <span class="foot-note">no templates. no AI vibes.</span>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
