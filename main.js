@@ -1,14 +1,13 @@
 /* main.js — sabin.pages.dev */
 
-// ── NAV STUCK ──
+// ── NAV ──
 const nav = document.getElementById('nav');
 window.addEventListener('scroll', () => nav.classList.toggle('stuck', scrollY > 50), { passive: true });
 
 // ── SCROLL PROGRESS ──
 const prog = document.getElementById('scroll-prog');
 window.addEventListener('scroll', () => {
-  const pct = scrollY / (document.body.scrollHeight - innerHeight);
-  prog.style.transform = `scaleY(${pct})`;
+  prog.style.transform = `scaleY(${scrollY / (document.body.scrollHeight - innerHeight)})`;
 }, { passive: true });
 
 // ── CURSOR ──
@@ -30,13 +29,13 @@ document.addEventListener('mousemove', e => {
   requestAnimationFrame(lerpRing);
 })();
 
-document.querySelectorAll('a, .card, .pill, button').forEach(el => {
+document.querySelectorAll('a, .card, .pill, button, .spotify-card').forEach(el => {
   el.addEventListener('mouseenter', () => { ring.classList.add('big'); ring.classList.remove('small'); });
   el.addEventListener('mouseleave', () => ring.classList.remove('big'));
 });
 
 // ── SCROLL REVEAL ──
-const ro = new IntersectionObserver((entries) => {
+const ro = new IntersectionObserver(entries => {
   entries.forEach((e, i) => {
     if (!e.isIntersecting) return;
     e.target.style.transitionDelay = (i * 0.06) + 's';
@@ -46,13 +45,127 @@ const ro = new IntersectionObserver((entries) => {
 }, { threshold: 0.08 });
 document.querySelectorAll('.rev').forEach(el => ro.observe(el));
 
+// ── THREE.JS WIREFRAME HERO ──
+(function initThree() {
+  const canvas = document.getElementById('three-canvas');
+  if (!canvas || typeof THREE === 'undefined') return;
+
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 0);
+
+  const scene  = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(55, canvas.offsetWidth / canvas.offsetHeight, 0.1, 200);
+  camera.position.z = 28;
+
+  function resize() {
+    const w = canvas.offsetWidth, h = canvas.offsetHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // color synced to theme
+  function getEdgeColor() {
+    return document.body.classList.contains('light')
+      ? new THREE.Color(0x2a2420)
+      : new THREE.Color(0xe8dfc8);
+  }
+
+  // build sparse field of wireframe icosahedra
+  const meshes = [];
+  const count  = 11;
+
+  function makeMesh() {
+    const geo  = new THREE.IcosahedronGeometry(Math.random() * 1.4 + 0.5, 0);
+    const mat  = new THREE.MeshBasicMaterial({ color: getEdgeColor(), wireframe: true });
+    const mesh = new THREE.Mesh(geo, mat);
+
+    // random position spread across hero
+    mesh.position.set(
+      (Math.random() - 0.5) * 52,
+      (Math.random() - 0.5) * 28,
+      (Math.random() - 0.5) * 14
+    );
+
+    mesh.userData = {
+      rx: (Math.random() - 0.5) * 0.004,
+      ry: (Math.random() - 0.5) * 0.003,
+      rz: (Math.random() - 0.5) * 0.002,
+      ox: mesh.position.x,
+      oy: mesh.position.y,
+      drift: Math.random() * Math.PI * 2,
+      driftSpeed: 0.0004 + Math.random() * 0.0003,
+    };
+
+    scene.add(mesh);
+    meshes.push(mesh);
+    return mesh;
+  }
+
+  for (let i = 0; i < count; i++) makeMesh();
+
+  // mouse influence
+  let tmx = 0, tmy = 0;
+  document.addEventListener('mousemove', e => {
+    tmx = (e.clientX / innerWidth  - 0.5) * 2;
+    tmy = (e.clientY / innerHeight - 0.5) * 2;
+  });
+
+  let smx = 0, smy = 0;
+
+  // opacity controlled by CSS variable opacity on canvas
+  // dark: edges visible at low opacity; light: same
+  function getOpacity() {
+    return document.body.classList.contains('light') ? 0.07 : 0.09;
+  }
+
+  canvas.style.opacity = getOpacity();
+
+  let frame = 0;
+  (function tick() {
+    frame++;
+    requestAnimationFrame(tick);
+
+    // smooth mouse
+    smx += (tmx - smx) * 0.02;
+    smy += (tmy - smy) * 0.02;
+
+    const t = frame * 0.001;
+
+    meshes.forEach(m => {
+      const d = m.userData;
+      m.rotation.x += d.rx;
+      m.rotation.y += d.ry;
+      m.rotation.z += d.rz;
+
+      // gentle float
+      m.position.x = d.ox + Math.sin(t * d.driftSpeed * 1000 + d.drift)         * 0.8;
+      m.position.y = d.oy + Math.cos(t * d.driftSpeed * 1000 + d.drift + 1.2)   * 0.5;
+
+      // mouse parallax — closer shapes move more
+      const depth = (m.position.z + 14) / 28;
+      m.position.x += smx * depth * 1.2;
+      m.position.y -= smy * depth * 0.8;
+
+      // update color if theme changed
+      m.material.color.copy(getEdgeColor());
+    });
+
+    canvas.style.opacity = getOpacity();
+    renderer.render(scene, camera);
+  })();
+})();
+
 // ── TERMINAL TYPEWRITER ──
 const lines = [
   { type: 'cmd',  text: 'whoami' },
   { type: 'out',  text: '<span class="out-hl">sabin karki</span> — full-stack developer, Nepal' },
   { type: 'spacer' },
   { type: 'cmd',  text: 'cat about.txt' },
-  { type: 'out',  text: 'I\'ve been building things on the web for a while now.' },
+  { type: 'out',  text: "I've been building things on the web for a while now." },
   { type: 'out',  text: 'Spring Boot on the backend, React on the front.' },
   { type: 'out',  text: 'I care about <span class="out-acc">how</span> software is built, not just that it works.' },
   { type: 'spacer' },
@@ -64,15 +177,12 @@ const lines = [
 ];
 
 const termBody = document.getElementById('term-body');
-const CHAR_DELAY = 28;
-const LINE_PAUSE = 120;
 
 async function typeTerminal() {
   for (const line of lines) {
     await typeLine(line);
-    await pause(LINE_PAUSE);
+    await pause(110);
   }
-  // blinking cursor at end
   const cur = document.createElement('span');
   cur.className = 'term-cursor';
   termBody.appendChild(cur);
@@ -84,49 +194,36 @@ function typeLine(line) {
       const sp = document.createElement('div');
       sp.className = 'term-spacer';
       termBody.appendChild(sp);
-      resolve();
-      return;
+      return resolve();
     }
-
     const row = document.createElement('div');
     row.className = 'term-line';
-
     if (line.type === 'cmd') {
       const p = document.createElement('span');
       p.className = 'prompt';
       p.textContent = '~/sabin $';
       row.appendChild(p);
     }
-
     const content = document.createElement('span');
     content.className = line.type === 'cmd' ? 'cmd' : 'out';
     row.appendChild(content);
     termBody.appendChild(row);
-
     if (line.type === 'cmd') {
-      typeText(content, line.text, false, resolve);
+      const plain = line.text.replace(/<[^>]+>/g, '');
+      let i = 0;
+      const tick = setInterval(() => {
+        content.textContent = plain.slice(0, ++i);
+        if (i >= plain.length) { clearInterval(tick); resolve(); }
+      }, 26);
     } else {
-      // output lines appear instantly (like real terminal)
       content.innerHTML = line.text;
       resolve();
     }
   });
 }
 
-function typeText(el, text, html, done) {
-  // strip any html for character-level typing
-  const plain = text.replace(/<[^>]+>/g, '');
-  let i = 0;
-  const tick = setInterval(() => {
-    el.textContent = plain.slice(0, ++i);
-    if (i >= plain.length) { clearInterval(tick); done(); }
-  }, CHAR_DELAY);
-}
-
 function pause(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-// start after a beat
-setTimeout(typeTerminal, 600);
+setTimeout(typeTerminal, 700);
 
 // ── MAGNETIC BUTTONS ──
 document.querySelectorAll('.mag').forEach(btn => {
@@ -139,7 +236,7 @@ document.querySelectorAll('.mag').forEach(btn => {
   btn.addEventListener('mouseleave', () => btn.style.transform = '');
 });
 
-// ── THEME TOGGLE — radial wipe ──
+// ── THEME TOGGLE ──
 const themeBtn = document.getElementById('theme-btn');
 const wipe     = document.getElementById('wipe');
 let light = false, wiping = false;
@@ -147,37 +244,27 @@ let light = false, wiping = false;
 themeBtn.addEventListener('click', () => {
   if (wiping) return;
   wiping = true;
-
   const r    = themeBtn.getBoundingClientRect();
   const cx   = r.left + r.width  / 2;
   const cy   = r.top  + r.height / 2;
   const diag = Math.hypot(innerWidth, innerHeight) * 2.2;
   const next = light ? '#0f0e0c' : '#f5efe3';
-
   themeBtn.classList.add('spin');
-
   Object.assign(wipe.style, {
-    left: cx + 'px', top: cy + 'px',
-    width: diag + 'px', height: diag + 'px',
+    left: cx+'px', top: cy+'px',
+    width: diag+'px', height: diag+'px',
     background: next,
     transform: 'translate(-50%,-50%) scale(0)',
-    transition: 'none',
-    opacity: '1'
+    transition: 'none', opacity: '1'
   });
-
   wipe.offsetHeight;
-
   wipe.style.transition = 'transform 0.62s cubic-bezier(0.25,0,0,1)';
   wipe.style.transform  = 'translate(-50%,-50%) scale(1)';
-
   setTimeout(() => {
     light = !light;
     document.body.classList.toggle('light', light);
-    themeBtn.textContent = light ? '◑' : '◑';
-
     wipe.style.transition = 'opacity 0.3s ease';
     wipe.style.opacity = '0';
-
     setTimeout(() => {
       wipe.style.cssText = '';
       themeBtn.classList.remove('spin');
@@ -186,11 +273,10 @@ themeBtn.addEventListener('click', () => {
   }, 380);
 });
 
-// ── LIVE TIMESTAMP in footer ──
+// ── LIVE TIMESTAMP ──
 const tsEl = document.getElementById('foot-ts');
 function updateTS() {
-  const now = new Date();
-  tsEl.textContent = now.toLocaleString('en-US', {
+  tsEl.textContent = new Date().toLocaleString('en-US', {
     weekday: 'short', month: 'short', day: 'numeric',
     hour: '2-digit', minute: '2-digit', timeZoneName: 'short'
   });
