@@ -6,6 +6,8 @@
   <title>Sabin Karki</title>
   <meta name="description" content="Full-stack developer based in Nepal. I build things properly.">
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+  <script src="main.js" defer></script>
 </head>
 <body>
 
@@ -17,16 +19,16 @@
   <nav id="nav">
     <a href="#" class="nav-name">sabin<span>.</span></a>
     <div class="nav-r">
-      <a href="#about" class="nav-link">about</a>
+      <a href="#about"    class="nav-link">about</a>
       <a href="#projects" class="nav-link">projects</a>
-      <a href="#contact" class="nav-link">contact</a>
+      <a href="#contact"  class="nav-link">contact</a>
       <button class="theme-btn" id="theme-btn" aria-label="toggle theme">◑</button>
     </div>
   </nav>
 
   <!-- ── HERO ── -->
   <section id="hero">
-    <div class="hero-bg-grid"></div>
+    <canvas id="three-canvas"></canvas>
     <div class="hero-wrap">
       <div class="terminal">
         <div class="terminal-bar">
@@ -68,7 +70,10 @@
           </p>
         </div>
       </div>
+
       <div class="about-sidebar rev">
+
+        <!-- currently card -->
         <div class="note-card">
           <div class="note-label">currently</div>
           <div class="note-content">
@@ -76,6 +81,7 @@
             <strong>open to work</strong> — internships, junior roles, freelance.
           </div>
         </div>
+
         <div>
           <div class="stack-label">Backend</div>
           <div class="pills">
@@ -105,6 +111,7 @@
             <span class="pill">Postman</span>
           </div>
         </div>
+
       </div>
     </div>
   </section>
@@ -119,18 +126,12 @@
           <div class="card-num">01</div>
           <div class="card-title">MindSpace</div>
           <div class="card-stack">Spring Boot · React · TypeScript · Docker</div>
-          <p class="card-desc">
-            Students upload their documents and have actual conversations with them. I used pgvector for semantic search so it finds genuinely relevant context, not just keyword matches. Gemini generates the flashcards. JWT keeps everyone's stuff isolated.
-          </p>
+          <p class="card-desc">Students upload their documents and have actual conversations with them. I used pgvector for semantic search so it finds genuinely relevant context, not just keyword matches. Gemini generates the flashcards. JWT keeps everyone's stuff isolated.</p>
           <div class="card-tags">
-            <span class="ctag">RAG</span>
-            <span class="ctag">pgvector</span>
-            <span class="ctag">Gemini API</span>
-            <span class="ctag">Apache Tika</span>
+            <span class="ctag">RAG</span><span class="ctag">pgvector</span><span class="ctag">Gemini API</span><span class="ctag">Apache Tika</span>
           </div>
           <a href="https://github.com/Sabin-Karki/MindSpace" target="_blank" class="card-link">
-            View on GitHub
-            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 10L10 1M10 1H3.5M10 1V7.5" stroke="currentColor" stroke-width="1.2"/></svg>
+            View on GitHub <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 10L10 1M10 1H3.5M10 1V7.5" stroke="currentColor" stroke-width="1.2"/></svg>
           </a>
         </div>
 
@@ -138,17 +139,12 @@
           <div class="card-num">02</div>
           <div class="card-title">Finance Tracker</div>
           <div class="card-stack">Spring Boot · React · Tailwind · Docker</div>
-          <p class="card-desc">
-            Track money in, money out, and where it all went. The schema is properly normalized with foreign keys between users, transactions, and budgets. Nothing lands in the database without validation. Each user only ever sees their own data.
-          </p>
+          <p class="card-desc">Track money in, money out, and where it all went. The schema is properly normalized with foreign keys between users, transactions, and budgets. Nothing lands in the database without validation. Each user only ever sees their own data.</p>
           <div class="card-tags">
-            <span class="ctag">REST API</span>
-            <span class="ctag">Spring Security</span>
-            <span class="ctag">CRUD</span>
+            <span class="ctag">REST API</span><span class="ctag">Spring Security</span><span class="ctag">CRUD</span>
           </div>
           <a href="https://github.com/Sabin-Karki/Finance-Tracker" target="_blank" class="card-link">
-            View on GitHub
-            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 10L10 1M10 1H3.5M10 1V7.5" stroke="currentColor" stroke-width="1.2"/></svg>
+            View on GitHub <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 10L10 1M10 1H3.5M10 1V7.5" stroke="currentColor" stroke-width="1.2"/></svg>
           </a>
         </div>
 
@@ -156,17 +152,12 @@
           <div class="card-num">03</div>
           <div class="card-title">MediFlow</div>
           <div class="card-stack">Spring Boot · Spring Data JPA · PostgreSQL</div>
-          <p class="card-desc">
-            Hospital CSV formats are a mess — different headers, inconsistent fields, all of it. MediFlow handles that async, without blocking anything. Strategy pattern lets you add new record types without touching existing code. Tested properly with JUnit.
-          </p>
+          <p class="card-desc">Hospital CSV formats are a mess — different headers, inconsistent fields, all of it. MediFlow handles that async, without blocking anything. Strategy pattern lets you add new record types without touching existing code. Tested properly with JUnit.</p>
           <div class="card-tags">
-            <span class="ctag">Async</span>
-            <span class="ctag">Strategy Pattern</span>
-            <span class="ctag">JUnit · Mockito</span>
+            <span class="ctag">Async</span><span class="ctag">Strategy Pattern</span><span class="ctag">JUnit · Mockito</span>
           </div>
           <a href="https://github.com/Sabin-Karki/MediFlow" target="_blank" class="card-link">
-            View on GitHub
-            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 10L10 1M10 1H3.5M10 1V7.5" stroke="currentColor" stroke-width="1.2"/></svg>
+            View on GitHub <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 10L10 1M10 1H3.5M10 1V7.5" stroke="currentColor" stroke-width="1.2"/></svg>
           </a>
         </div>
 
@@ -178,53 +169,28 @@
   <section id="contact">
     <div class="contact-layout">
       <div class="contact-left rev">
-        <div class="contact-big">
-          Let's make<br>something<br><em>real.</em>
-        </div>
-        <p class="contact-sub">
-          If you're working on something interesting and you need a backend that doesn't fall apart or a frontend that doesn't look like a template — reach out.
-        </p>
+        <div class="contact-big">Let's make<br>something<br><em>real.</em></div>
+        <p class="contact-sub">If you're working on something interesting and you need a backend that doesn't fall apart or a frontend that doesn't look like a template — reach out.</p>
         <div class="contact-links">
           <a href="mailto:sabinkarki064@gmail.com" class="cl">
-            <div>
-              <div class="cl-label">Email</div>
-              <div class="cl-val">sabinkarki064@gmail.com</div>
-            </div>
+            <div><div class="cl-label">Email</div><div class="cl-val">sabinkarki064@gmail.com</div></div>
             <span class="cl-arrow">↗</span>
           </a>
           <a href="https://github.com/Sabin-Karki" target="_blank" class="cl">
-            <div>
-              <div class="cl-label">GitHub</div>
-              <div class="cl-val">github.com/Sabin-Karki</div>
-            </div>
+            <div><div class="cl-label">GitHub</div><div class="cl-val">github.com/Sabin-Karki</div></div>
             <span class="cl-arrow">↗</span>
           </a>
           <a href="https://linkedin.com/in/sabinkarki77" target="_blank" class="cl">
-            <div>
-              <div class="cl-label">LinkedIn</div>
-              <div class="cl-val">in/sabinkarki77</div>
-            </div>
+            <div><div class="cl-label">LinkedIn</div><div class="cl-val">in/sabinkarki77</div></div>
             <span class="cl-arrow">↗</span>
           </a>
         </div>
       </div>
       <div class="contact-facts rev">
-        <div class="fact-group">
-          <div class="fact-label">Based in</div>
-          <div class="fact-val">Nepal</div>
-        </div>
-        <div class="fact-group">
-          <div class="fact-label">Education</div>
-          <div class="fact-val">BCA, Nepathya College<br>Butwal — 2026</div>
-        </div>
-        <div class="fact-group">
-          <div class="fact-label">Availability</div>
-          <div class="fact-val">Open to work</div>
-        </div>
-        <div class="fact-group">
-          <div class="fact-label">Timezone</div>
-          <div class="fact-val">NPT (UTC +5:45)</div>
-        </div>
+        <div class="fact-group"><div class="fact-label">Based in</div><div class="fact-val">Nepal</div></div>
+        <div class="fact-group"><div class="fact-label">Education</div><div class="fact-val">BCA, Nepathya College<br>Butwal — 2026</div></div>
+        <div class="fact-group"><div class="fact-label">Availability</div><div class="fact-val">Open to work</div></div>
+        <div class="fact-group"><div class="fact-label">Timezone</div><div class="fact-val">NPT (UTC +5:45)</div></div>
       </div>
     </div>
   </section>
@@ -232,9 +198,7 @@
   <footer>
     <span class="foot-sig">sabin<span>.</span>pages.dev</span>
     <span class="foot-ts" id="foot-ts"></span>
-    <span class="foot-note">no templates. no AI vibes.</span>
   </footer>
 
-  <script src="main.js"></script>
 </body>
 </html>
