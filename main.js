@@ -29,7 +29,7 @@ document.addEventListener('mousemove', e => {
   requestAnimationFrame(lerpRing);
 })();
 
-document.querySelectorAll('a, .card, .pill, button, .spotify-card').forEach(el => {
+document.querySelectorAll('a, .card, .pill, button').forEach(el => {
   el.addEventListener('mouseenter', () => { ring.classList.add('big'); ring.classList.remove('small'); });
   el.addEventListener('mouseleave', () => ring.classList.remove('big'));
 });
@@ -240,7 +240,6 @@ document.querySelectorAll('.mag').forEach(btn => {
 const themeBtn = document.getElementById('theme-btn');
 const wipe     = document.getElementById('wipe');
 let light = true, wiping = false;
-document.body.classList.add('light')
 themeBtn.addEventListener('click', () => {
   if (wiping) return;
   wiping = true;
