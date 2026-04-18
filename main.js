@@ -162,7 +162,7 @@ document.querySelectorAll('.rev').forEach(el => ro.observe(el));
 // ── TERMINAL TYPEWRITER ──
 const lines = [
   { type: 'cmd',  text: 'whoami' },
-  { type: 'out',  text: '<span class="out-hl">sabin karki</span> — full-stack developer, Nepal' },
+  { type: 'out',  text: '<span class="out-hl">sabin karki</span> — backend developer, Nepal' },
   { type: 'spacer' },
   { type: 'cmd',  text: 'cat about.txt' },
   { type: 'out',  text: "I've been building things on the web for a while now." },
@@ -239,8 +239,8 @@ document.querySelectorAll('.mag').forEach(btn => {
 // ── THEME TOGGLE ──
 const themeBtn = document.getElementById('theme-btn');
 const wipe     = document.getElementById('wipe');
-let light = false, wiping = false;
-
+let light = true, wiping = false;
+document.body.classList.add('light')
 themeBtn.addEventListener('click', () => {
   if (wiping) return;
   wiping = true;
