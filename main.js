@@ -165,15 +165,15 @@ const lines = [
   { type: 'out',  text: '<span class="out-hl">sabin karki</span> — backend developer, Nepal' },
   { type: 'spacer' },
   { type: 'cmd',  text: 'cat about.txt' },
-  { type: 'out',  text: "I've been building things on the web for a while now." },
-  { type: 'out',  text: 'Spring Boot on the backend, React on the front.' },
-  { type: 'out',  text: 'I care about <span class="out-acc">how</span> software is built, not just that it works.' },
+  { type: 'out',  text: 'I build backend-focused web applications.' },
+  { type: 'out',  text: 'Spring Boot for APIs and business logic, React for the UI.' },
+  { type: 'out',  text: 'I care about clean structure, reliable behavior, and software that makes sense to maintain.' },
   { type: 'spacer' },
   { type: 'cmd',  text: 'ls projects/' },
   { type: 'out',  text: '<span class="out-g">MindSpace/</span>  <span class="out-g">FinanceTracker/</span>  <span class="out-g">MediFlow/</span>' },
   { type: 'spacer' },
   { type: 'cmd',  text: 'echo $STATUS' },
-  { type: 'out',  text: 'open to opportunities — graduating 2026' },
+  { type: 'out',  text: 'open to opportunities · graduating 2026' },
 ];
 
 const termBody = document.getElementById('term-body');
