@@ -1,51 +1,83 @@
 /* main.js — sabin.pages.dev */
 
-// ── NAV ──
-const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => nav.classList.toggle('stuck', scrollY > 50), { passive: true });
+const blogPosts = [
+  {
+    slug: 'all-about-thread',
+    title: 'All About Thread',
+    file: '/contents/All About Thread.md',
+    topic: 'Java concurrency',
+    dateLabel: 'Learning notes',
+  },
+];
 
-// ── SCROLL PROGRESS ──
+const nav = document.getElementById('nav');
 const prog = document.getElementById('scroll-prog');
+const dot = document.getElementById('cur-dot');
+const ring = document.getElementById('cur-ring');
+const termBody = document.getElementById('term-body');
+const tsEl = document.getElementById('foot-ts');
+const homeView = document.getElementById('home-view');
+const routeViews = document.querySelectorAll('.route-page');
+const projectPreviewBoard = document.getElementById('project-preview-board');
+const projectsRouteBoard = document.getElementById('projects-route-board');
+const blogPreviewList = document.getElementById('blog-preview-list');
+const blogRouteList = document.getElementById('blog-route-list');
+const postTitle = document.getElementById('post-title');
+const postMeta = document.getElementById('post-meta');
+const postContent = document.getElementById('post-content');
+
+const markdownCache = new Map();
+let mx = -100;
+let my = -100;
+let rx = -100;
+let ry = -100;
+
 window.addEventListener('scroll', () => {
-  prog.style.transform = `scaleY(${scrollY / (document.body.scrollHeight - innerHeight)})`;
+  nav.classList.toggle('stuck', scrollY > 50);
+  const scrollable = Math.max(document.body.scrollHeight - innerHeight, 1);
+  prog.style.transform = `scaleY(${scrollY / scrollable})`;
 }, { passive: true });
 
-// ── CURSOR ──
-const dot  = document.getElementById('cur-dot');
-const ring = document.getElementById('cur-ring');
-let mx = -100, my = -100, rx = -100, ry = -100;
-
-document.addEventListener('mousemove', e => {
-  mx = e.clientX; my = e.clientY;
+document.addEventListener('mousemove', event => {
+  mx = event.clientX;
+  my = event.clientY;
   dot.style.left = mx + 'px';
-  dot.style.top  = my + 'px';
+  dot.style.top = my + 'px';
 });
 
 (function lerpRing() {
   rx += (mx - rx) * 0.1;
   ry += (my - ry) * 0.1;
   ring.style.left = rx + 'px';
-  ring.style.top  = ry + 'px';
+  ring.style.top = ry + 'px';
   requestAnimationFrame(lerpRing);
 })();
 
-document.querySelectorAll('a, .card, .pill, button').forEach(el => {
-  el.addEventListener('mouseenter', () => { ring.classList.add('big'); ring.classList.remove('small'); });
-  el.addEventListener('mouseleave', () => ring.classList.remove('big'));
-});
+function bindCursorTargets() {
+  document.querySelectorAll('a, .card, .pill, button, .blog-item').forEach(el => {
+    if (el.dataset.cursorBound === 'true') return;
+    el.dataset.cursorBound = 'true';
+    el.addEventListener('mouseenter', () => {
+      ring.classList.add('big');
+      ring.classList.remove('small');
+    });
+    el.addEventListener('mouseleave', () => ring.classList.remove('big'));
+  });
+}
 
-// ── SCROLL REVEAL ──
 const ro = new IntersectionObserver(entries => {
-  entries.forEach((e, i) => {
-    if (!e.isIntersecting) return;
-    e.target.style.transitionDelay = (i * 0.06) + 's';
-    e.target.classList.add('on');
-    ro.unobserve(e.target);
+  entries.forEach((entry, index) => {
+    if (!entry.isIntersecting) return;
+    entry.target.style.transitionDelay = `${index * 0.06}s`;
+    entry.target.classList.add('on');
+    ro.unobserve(entry.target);
   });
 }, { threshold: 0.08 });
-document.querySelectorAll('.rev').forEach(el => ro.observe(el));
 
-// ── THREE.JS WIREFRAME HERO ──
+function observeReveals(scope = document) {
+  scope.querySelectorAll('.rev').forEach(el => ro.observe(el));
+}
+
 (function initThree() {
   const canvas = document.getElementById('three-canvas');
   if (!canvas || typeof THREE === 'undefined') return;
@@ -54,36 +86,34 @@ document.querySelectorAll('.rev').forEach(el => ro.observe(el));
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.setClearColor(0x000000, 0);
 
-  const scene  = new THREE.Scene();
+  const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(55, canvas.offsetWidth / canvas.offsetHeight, 0.1, 200);
   camera.position.z = 28;
 
   function resize() {
-    const w = canvas.offsetWidth, h = canvas.offsetHeight;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
+    const width = canvas.offsetWidth;
+    const height = canvas.offsetHeight;
+    renderer.setSize(width, height, false);
+    camera.aspect = width / height;
     camera.updateProjectionMatrix();
   }
   resize();
   window.addEventListener('resize', resize);
 
-  // color synced to theme
   function getEdgeColor() {
     return document.body.classList.contains('light')
       ? new THREE.Color(0x2a2420)
       : new THREE.Color(0xe8dfc8);
   }
 
-  // build sparse field of wireframe icosahedra
   const meshes = [];
-  const count  = 11;
+  const count = 11;
 
   function makeMesh() {
-    const geo  = new THREE.IcosahedronGeometry(Math.random() * 1.4 + 0.5, 0);
-    const mat  = new THREE.MeshBasicMaterial({ color: getEdgeColor(), wireframe: true });
+    const geo = new THREE.IcosahedronGeometry(Math.random() * 1.4 + 0.5, 0);
+    const mat = new THREE.MeshBasicMaterial({ color: getEdgeColor(), wireframe: true });
     const mesh = new THREE.Mesh(geo, mat);
 
-    // random position spread across hero
     mesh.position.set(
       (Math.random() - 0.5) * 52,
       (Math.random() - 0.5) * 28,
@@ -102,22 +132,20 @@ document.querySelectorAll('.rev').forEach(el => ro.observe(el));
 
     scene.add(mesh);
     meshes.push(mesh);
-    return mesh;
   }
 
-  for (let i = 0; i < count; i++) makeMesh();
+  for (let index = 0; index < count; index++) makeMesh();
 
-  // mouse influence
-  let tmx = 0, tmy = 0;
-  document.addEventListener('mousemove', e => {
-    tmx = (e.clientX / innerWidth  - 0.5) * 2;
-    tmy = (e.clientY / innerHeight - 0.5) * 2;
+  let tmx = 0;
+  let tmy = 0;
+  let smx = 0;
+  let smy = 0;
+
+  document.addEventListener('mousemove', event => {
+    tmx = (event.clientX / innerWidth - 0.5) * 2;
+    tmy = (event.clientY / innerHeight - 0.5) * 2;
   });
 
-  let smx = 0, smy = 0;
-
-  // opacity controlled by CSS variable opacity on canvas
-  // dark: edges visible at low opacity; light: same
   function getOpacity() {
     return document.body.classList.contains('light') ? 0.07 : 0.09;
   }
@@ -129,29 +157,24 @@ document.querySelectorAll('.rev').forEach(el => ro.observe(el));
     frame++;
     requestAnimationFrame(tick);
 
-    // smooth mouse
     smx += (tmx - smx) * 0.02;
     smy += (tmy - smy) * 0.02;
 
-    const t = frame * 0.001;
+    const time = frame * 0.001;
 
-    meshes.forEach(m => {
-      const d = m.userData;
-      m.rotation.x += d.rx;
-      m.rotation.y += d.ry;
-      m.rotation.z += d.rz;
+    meshes.forEach(mesh => {
+      const data = mesh.userData;
+      mesh.rotation.x += data.rx;
+      mesh.rotation.y += data.ry;
+      mesh.rotation.z += data.rz;
 
-      // gentle float
-      m.position.x = d.ox + Math.sin(t * d.driftSpeed * 1000 + d.drift)         * 0.8;
-      m.position.y = d.oy + Math.cos(t * d.driftSpeed * 1000 + d.drift + 1.2)   * 0.5;
+      mesh.position.x = data.ox + Math.sin(time * data.driftSpeed * 1000 + data.drift) * 0.8;
+      mesh.position.y = data.oy + Math.cos(time * data.driftSpeed * 1000 + data.drift + 1.2) * 0.5;
 
-      // mouse parallax — closer shapes move more
-      const depth = (m.position.z + 14) / 28;
-      m.position.x += smx * depth * 1.2;
-      m.position.y -= smy * depth * 0.8;
-
-      // update color if theme changed
-      m.material.color.copy(getEdgeColor());
+      const depth = (mesh.position.z + 14) / 28;
+      mesh.position.x += smx * depth * 1.2;
+      mesh.position.y -= smy * depth * 0.8;
+      mesh.material.color.copy(getEdgeColor());
     });
 
     canvas.style.opacity = getOpacity();
@@ -159,106 +182,316 @@ document.querySelectorAll('.rev').forEach(el => ro.observe(el));
   })();
 })();
 
-// ── TERMINAL TYPEWRITER ──
-const lines = [
-  { type: 'cmd',  text: 'whoami' },
-  { type: 'out',  text: '<span class="out-hl">sabin karki</span> — backend developer, Nepal' },
+const terminalLines = [
+  { type: 'cmd', text: 'whoami' },
+  { type: 'out', text: '<span class="out-hl">sabin karki</span> — backend developer, Nepal' },
   { type: 'spacer' },
-  { type: 'cmd',  text: 'cat about.txt' },
-  { type: 'out',  text: 'I build backend-focused web applications.' },
-  { type: 'out',  text: 'Spring Boot for APIs and business logic, React for the UI.' },
-  { type: 'out',  text: 'I care about clean structure, reliable behavior, and software that makes sense to maintain.' },
+  { type: 'cmd', text: 'cat about.txt' },
+  { type: 'out', text: 'I build backend-focused web applications.' },
+  { type: 'out', text: 'Spring Boot for APIs and business logic, React for the UI.' },
+  { type: 'out', text: 'I care about clean structure, reliable behavior, and software that makes sense to maintain.' },
   { type: 'spacer' },
-  { type: 'cmd',  text: 'ls projects/' },
-  { type: 'out',  text: '<span class="out-g">MindSpace/</span>  <span class="out-g">FinanceTracker/</span>  <span class="out-g">MediFlow/</span>' },
+  { type: 'cmd', text: 'ls blogs/' },
+  { type: 'out', text: '<span class="out-g">all-about-thread.md</span>' },
   { type: 'spacer' },
-  { type: 'cmd',  text: 'echo $STATUS' },
-  { type: 'out',  text: 'open to opportunities · graduating 2026' },
+  { type: 'cmd', text: 'echo $STATUS' },
+  { type: 'out', text: 'open to opportunities · graduating 2026' },
 ];
 
-const termBody = document.getElementById('term-body');
-
 async function typeTerminal() {
-  for (const line of lines) {
+  if (!termBody || termBody.dataset.typed === 'true') return;
+  termBody.dataset.typed = 'true';
+
+  for (const line of terminalLines) {
     await typeLine(line);
     await pause(110);
   }
-  const cur = document.createElement('span');
-  cur.className = 'term-cursor';
-  termBody.appendChild(cur);
+
+  const cursor = document.createElement('span');
+  cursor.className = 'term-cursor';
+  termBody.appendChild(cursor);
 }
 
 function typeLine(line) {
   return new Promise(resolve => {
     if (line.type === 'spacer') {
-      const sp = document.createElement('div');
-      sp.className = 'term-spacer';
-      termBody.appendChild(sp);
-      return resolve();
+      const spacer = document.createElement('div');
+      spacer.className = 'term-spacer';
+      termBody.appendChild(spacer);
+      resolve();
+      return;
     }
+
     const row = document.createElement('div');
     row.className = 'term-line';
+
     if (line.type === 'cmd') {
-      const p = document.createElement('span');
-      p.className = 'prompt';
-      p.textContent = '~/sabin $';
-      row.appendChild(p);
+      const prompt = document.createElement('span');
+      prompt.className = 'prompt';
+      prompt.textContent = '~/sabin $';
+      row.appendChild(prompt);
     }
+
     const content = document.createElement('span');
     content.className = line.type === 'cmd' ? 'cmd' : 'out';
     row.appendChild(content);
     termBody.appendChild(row);
+
     if (line.type === 'cmd') {
       const plain = line.text.replace(/<[^>]+>/g, '');
-      let i = 0;
-      const tick = setInterval(() => {
-        content.textContent = plain.slice(0, ++i);
-        if (i >= plain.length) { clearInterval(tick); resolve(); }
+      let index = 0;
+      const timer = setInterval(() => {
+        content.textContent = plain.slice(0, ++index);
+        if (index >= plain.length) {
+          clearInterval(timer);
+          resolve();
+        }
       }, 26);
-    } else {
-      content.innerHTML = line.text;
-      resolve();
+      return;
+    }
+
+    content.innerHTML = line.text;
+    resolve();
+  });
+}
+
+function pause(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function slugFromTitle(title) {
+  return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+}
+
+function plainExcerpt(markdown, limit = 180) {
+  const firstParagraph = markdown
+    .split('\n\n')
+    .map(block => block.replace(/^#+\s+/gm, '').trim())
+    .find(block => block && !block.startsWith('```')) || '';
+
+  const cleaned = firstParagraph
+    .replace(/==/g, '')
+    .replace(/`/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  return cleaned.length > limit ? `${cleaned.slice(0, limit).trim()}...` : cleaned;
+}
+
+async function getMarkdown(post) {
+  if (markdownCache.has(post.slug)) return markdownCache.get(post.slug);
+  const response = await fetch(post.file);
+  if (!response.ok) {
+    throw new Error(`Unable to load ${post.file}`);
+  }
+  const markdown = await response.text();
+  markdownCache.set(post.slug, markdown);
+  return markdown;
+}
+
+async function enrichPosts() {
+  const settled = await Promise.allSettled(blogPosts.map(async post => {
+    const markdown = await getMarkdown(post);
+    const derivedTitle = markdown.match(/^#\s+(.+)$/m)?.[1]?.trim();
+    if (!post.title && derivedTitle) post.title = derivedTitle;
+    if (!post.title) post.title = post.file.split('/').pop().replace(/\.md$/i, '');
+    if (!post.slug) post.slug = slugFromTitle(post.title);
+    post.excerpt = post.excerpt || plainExcerpt(markdown);
+  }));
+
+  settled.forEach((result, index) => {
+    if (result.status === 'rejected') {
+      const post = blogPosts[index];
+      post.excerpt = 'This post could not be loaded right now.';
     }
   });
 }
 
-function pause(ms) { return new Promise(r => setTimeout(r, ms)); }
-setTimeout(typeTerminal, 700);
+function createBlogCard(post) {
+  const item = document.createElement('a');
+  item.className = 'blog-item';
+  item.href = `/blogs/${post.slug}`;
+  item.dataset.route = 'true';
+  item.innerHTML = `
+    <div class="blog-item-top">
+      <span class="blog-topic">${post.topic}</span>
+      <span class="blog-arrow">↗</span>
+    </div>
+    <h3 class="blog-title">${post.title}</h3>
+    <p class="blog-excerpt">${post.excerpt || ''}</p>
+    <div class="blog-meta">${post.dateLabel}</div>
+  `;
+  return item;
+}
 
-// ── MAGNETIC BUTTONS ──
-document.querySelectorAll('.mag').forEach(btn => {
-  btn.addEventListener('mousemove', e => {
-    const r = btn.getBoundingClientRect();
-    const x = (e.clientX - (r.left + r.width  / 2)) * 0.25;
-    const y = (e.clientY - (r.top  + r.height / 2)) * 0.25;
-    btn.style.transform = `translate(${x}px,${y}px)`;
+function renderBlogLists() {
+  blogPreviewList.innerHTML = '';
+  blogRouteList.innerHTML = '';
+
+  blogPosts.slice(0, 3).forEach(post => blogPreviewList.appendChild(createBlogCard(post)));
+  blogPosts.forEach(post => blogRouteList.appendChild(createBlogCard(post)));
+
+  bindCursorTargets();
+}
+
+function renderProjectsRoute() {
+  projectsRouteBoard.innerHTML = '';
+  const cards = [...projectPreviewBoard.children].map(card => card.cloneNode(true));
+  cards.forEach(card => {
+    card.classList.remove('on');
+    projectsRouteBoard.appendChild(card);
+    ro.observe(card);
   });
-  btn.addEventListener('mouseleave', () => btn.style.transform = '');
+  bindCursorTargets();
+}
+
+function hideAllViews() {
+  homeView.hidden = true;
+  routeViews.forEach(view => {
+    view.hidden = true;
+  });
+}
+
+function showView(name) {
+  hideAllViews();
+  if (name === 'home') {
+    homeView.hidden = false;
+    document.body.dataset.route = 'home';
+    return;
+  }
+
+  const active = document.querySelector(`[data-view="${name}"]`);
+  if (active) {
+    active.hidden = false;
+    document.body.dataset.route = name;
+  }
+}
+
+function normalizePath(pathname) {
+  if (!pathname || pathname === '/') return '/';
+  return pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
+}
+
+async function renderPost(slug) {
+  const post = blogPosts.find(item => item.slug === slug);
+  if (!post) {
+    postTitle.textContent = 'Post not found';
+    postMeta.textContent = 'This blog post does not exist yet.';
+    postContent.innerHTML = '<p>The link is valid for the route system, but there is no markdown file connected to it yet.</p>';
+    showView('post');
+    return;
+  }
+
+  try {
+    const markdown = await getMarkdown(post);
+    postTitle.textContent = post.title;
+    postMeta.textContent = `${post.topic} · ${post.dateLabel}`;
+    postContent.innerHTML = window.marked ? window.marked.parse(markdown) : `<pre>${markdown}</pre>`;
+  } catch (error) {
+    postTitle.textContent = post.title;
+    postMeta.textContent = `${post.topic} · ${post.dateLabel}`;
+    postContent.innerHTML = '<p>I could not load this markdown file right now.</p>';
+  }
+
+  showView('post');
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+async function renderRoute() {
+  const path = normalizePath(location.pathname);
+
+  if (path === '/') {
+    showView('home');
+    return;
+  }
+
+  if (path === '/projects') {
+    renderProjectsRoute();
+    showView('projects');
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    return;
+  }
+
+  if (path === '/blogs') {
+    showView('blogs');
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    return;
+  }
+
+  if (path.startsWith('/blogs/')) {
+    const slug = path.replace('/blogs/', '');
+    await renderPost(slug);
+    return;
+  }
+
+  history.replaceState({}, '', '/');
+  showView('home');
+}
+
+document.addEventListener('click', event => {
+  const link = event.target.closest('a[data-route]');
+  if (!link) return;
+
+  const url = new URL(link.href, location.origin);
+  if (url.origin !== location.origin) return;
+
+  event.preventDefault();
+  history.pushState({}, '', `${url.pathname}${url.hash}`);
+  renderRoute().then(() => {
+    if (url.hash && normalizePath(url.pathname) === '/') {
+      const target = document.querySelector(url.hash);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
 });
 
-// ── THEME TOGGLE ──
+window.addEventListener('popstate', () => {
+  renderRoute();
+});
+
+document.querySelectorAll('.mag').forEach(btn => {
+  btn.addEventListener('mousemove', event => {
+    const rect = btn.getBoundingClientRect();
+    const x = (event.clientX - (rect.left + rect.width / 2)) * 0.25;
+    const y = (event.clientY - (rect.top + rect.height / 2)) * 0.25;
+    btn.style.transform = `translate(${x}px,${y}px)`;
+  });
+  btn.addEventListener('mouseleave', () => {
+    btn.style.transform = '';
+  });
+});
+
 const themeBtn = document.getElementById('theme-btn');
-const wipe     = document.getElementById('wipe');
-let light = true, wiping = false;
+const wipe = document.getElementById('wipe');
+let light = true;
+let wiping = false;
+
 themeBtn.addEventListener('click', () => {
   if (wiping) return;
   wiping = true;
-  const r    = themeBtn.getBoundingClientRect();
-  const cx   = r.left + r.width  / 2;
-  const cy   = r.top  + r.height / 2;
+
+  const rect = themeBtn.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
   const diag = Math.hypot(innerWidth, innerHeight) * 2.2;
   const next = light ? '#0f0e0c' : '#f5efe3';
+
   themeBtn.classList.add('spin');
   Object.assign(wipe.style, {
-    left: cx+'px', top: cy+'px',
-    width: diag+'px', height: diag+'px',
+    left: `${cx}px`,
+    top: `${cy}px`,
+    width: `${diag}px`,
+    height: `${diag}px`,
     background: next,
     transform: 'translate(-50%,-50%) scale(0)',
-    transition: 'none', opacity: '1'
+    transition: 'none',
+    opacity: '1',
   });
+
   wipe.offsetHeight;
   wipe.style.transition = 'transform 0.62s cubic-bezier(0.25,0,0,1)';
-  wipe.style.transform  = 'translate(-50%,-50%) scale(1)';
+  wipe.style.transform = 'translate(-50%,-50%) scale(1)';
+
   setTimeout(() => {
     light = !light;
     document.body.classList.toggle('light', light);
@@ -272,13 +505,31 @@ themeBtn.addEventListener('click', () => {
   }, 380);
 });
 
-// ── LIVE TIMESTAMP ──
-const tsEl = document.getElementById('foot-ts');
 function updateTS() {
   tsEl.textContent = new Date().toLocaleString('en-US', {
-    weekday: 'short', month: 'short', day: 'numeric',
-    hour: '2-digit', minute: '2-digit', timeZoneName: 'short'
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZoneName: 'short',
   });
 }
-updateTS();
-setInterval(updateTS, 60000);
+
+async function init() {
+  observeReveals();
+  bindCursorTargets();
+  updateTS();
+  setInterval(updateTS, 60000);
+  setTimeout(typeTerminal, 700);
+  await enrichPosts();
+  renderBlogLists();
+  await renderRoute();
+
+  if (location.hash && normalizePath(location.pathname) === '/') {
+    const target = document.querySelector(location.hash);
+    if (target) target.scrollIntoView({ behavior: 'auto', block: 'start' });
+  }
+}
+
+init();
