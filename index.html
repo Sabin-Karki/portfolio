@@ -123,47 +123,8 @@
             <a href="/projects" class="section-jump rev" data-route>See all projects</a>
           </div>
           <div class="board" id="project-preview-board">
-            <div class="card rev">
-              <div class="card-num">01</div>
-              <div class="card-title">MindSpace</div>
-              <div class="card-stack">Spring Boot · React · TypeScript · Docker</div>
-              <p class="card-desc">Students upload their documents and have actual conversations with them. I used pgvector for semantic search so it finds genuinely relevant context, not just keyword matches. Gemini generates the flashcards. JWT keeps everyone's stuff isolated.</p>
-              <div class="card-tags">
-                <span class="ctag">RAG</span><span class="ctag">pgvector</span><span class="ctag">Gemini API</span><span class="ctag">Apache Tika</span>
-              </div>
-              <a href="https://github.com/Sabin-Karki/MindSpace" target="_blank" class="card-link">
-                View on GitHub <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 10L10 1M10 1H3.5M10 1V7.5" stroke="currentColor" stroke-width="1.2"/></svg>
-              </a>
-              <a href="https://mindspace-ten-tau.vercel.app/" target="_blank" class="card-link">
-                View Live <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M! 10L10 1M10 1H3.5M10 1V7.5" stroke="currentColor" stroke-width="1.2"></svg>
-              </a>
-            </div>
-
-            <div class="card rev">
-              <div class="card-num">02</div>
-              <div class="card-title">Finance Tracker</div>
-              <div class="card-stack">Spring Boot · React · Tailwind · Docker</div>
-              <p class="card-desc">Track money in, money out, and where it all went. The schema is properly normalized with foreign keys between users, transactions, and budgets. Nothing lands in the database without validation. Each user only ever sees their own data.</p>
-              <div class="card-tags">
-                <span class="ctag">REST API</span><span class="ctag">Spring Security</span><span class="ctag">CRUD</span>
-              </div>
-              <a href="https://github.com/Sabin-Karki/Finance-Tracker" target="_blank" class="card-link">
-                View on GitHub <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 10L10 1M10 1H3.5M10 1V7.5" stroke="currentColor" stroke-width="1.2"/></svg>
-              </a>
-            </div>
-
-            <div class="card rev">
-              <div class="card-num">03</div>
-              <div class="card-title">MediFlow</div>
-              <div class="card-stack">Spring Boot · Spring Data JPA · PostgreSQL</div>
-              <p class="card-desc">Hospital CSV formats are a mess — different headers, inconsistent fields, all of it. MediFlow handles that async, without blocking anything. Strategy pattern lets you add new record types without touching existing code. Tested properly with JUnit.</p>
-              <div class="card-tags">
-                <span class="ctag">Async</span><span class="ctag">Strategy Pattern</span><span class="ctag">JUnit · Mockito</span>
-              </div>
-              <a href="https://github.com/Sabin-Karki/MediFlow" target="_blank" class="card-link">
-                View on GitHub <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 10L10 1M10 1H3.5M10 1V7.5" stroke="currentColor" stroke-width="1.2"/></svg>
-              </a>
-            </div>
+            <!-- Project cards are rendered by JavaScript. The home preview shows the first three projects (pinned),
+                 while the full `/projects` page lists all entries from the `projects` array in main.js. -->
           </div>
         </div>
       </section>
