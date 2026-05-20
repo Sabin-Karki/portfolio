@@ -10,6 +10,103 @@ const blogPosts = [
   },
 ];
 
+const projects = [
+  {
+    id: 'mindspace',
+    num: '01',
+    title: 'MindSpace',
+    stack: 'Spring Boot · React · TypeScript · Docker',
+    desc: "Students upload their documents and have actual conversations with them. I used pgvector for semantic search so it finds genuinely relevant context, not just keyword matches. Gemini generates the flashcards. JWT keeps everyone's stuff isolated.",
+    tags: ['RAG','pgvector','Gemini API','Apache Tika'],
+    repo: 'https://github.com/Sabin-Karki/MindSpace',
+    live: 'https://mindspace-ten-tau.vercel.app/'
+  },
+  {
+    id: 'finance-tracker',
+    num: '02',
+    title: 'Finance Tracker',
+    stack: 'Spring Boot · React · Tailwind · Docker',
+    desc: 'Track money in, money out, and where it all went. The schema is properly normalized with foreign keys between users, transactions, and budgets. Nothing lands in the database without validation. Each user only ever sees their own data.',
+    tags: ['REST API','Spring Security','CRUD'],
+    repo: 'https://github.com/Sabin-Karki/Finance-Tracker'
+  },
+  {
+    id: 'mediflow',
+    num: '03',
+    title: 'MediFlow',
+    stack: 'Spring Boot · Spring Data JPA · PostgreSQL',
+    desc: 'Hospital CSV formats are a mess — different headers, inconsistent fields, all of it. MediFlow handles that async, without blocking anything. Strategy pattern lets you add new record types without touching existing code. Tested properly with JUnit.',
+    tags: ['Async','Strategy Pattern','JUnit','Mockito'],
+    repo: 'https://github.com/Sabin-Karki/MediFlow'
+  },
+  // Additional projects only shown on /projects
+  {
+    id: 'grit4j',
+    num: '04',
+    title: 'Grit4J',
+    stack: 'Java',
+    desc: 'Token bucket algorithm implemented from scratch.',
+    tags: ['Java','Algorithm'],
+    repo: 'https://github.com/Sabin-Karki/Grit4J'
+  },
+  {
+    id: 'springspecter',
+    num: '05',
+    title: 'SpringSpecter',
+    stack: 'Spring Boot',
+    desc: 'CLI tool to scan Spring Boot projects for common security misconfigurations and dependency vulnerabilities.',
+    tags: ['Security','CLI','Spring Boot'],
+    repo: 'https://github.com/Sabin-Karki/SpringSpecter'
+  },
+  {
+    id: 'electromart',
+    num: '06',
+    title: 'ElectroMart',
+    stack: 'TypeScript · Express',
+    desc: 'Full-Stack Application built using TypeScript and Express.',
+    tags: ['TypeScript','Express','Full-Stack'],
+    repo: 'https://github.com/Sabin-Karki/ElectroMart'
+  }
+];
+
+function createProjectCard(p) {
+  const card = document.createElement('div');
+  card.className = 'card rev';
+  const tags = (p.tags || []).map(t => `<span class="ctag">${t}</span>`).join('');
+  card.innerHTML = `
+    <div class="card-num">${p.num}</div>
+    <div class="card-title">${p.title}</div>
+    <div class="card-stack">${p.stack}</div>
+    <p class="card-desc">${p.desc}</p>
+    <div class="card-tags">${tags}</div>
+    ${p.repo ? `<a href="${p.repo}" target="_blank" class="card-link">View on GitHub <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 10L10 1M10 1H3.5M10 1V7.5" stroke="currentColor" stroke-width="1.2"/></svg></a>` : ''}
+    ${p.live ? `<a href="${p.live}" target="_blank" class="card-link">View Live <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 10L10 1M10 1H3.5M10 1V7.5" stroke="currentColor" stroke-width="1.2"/></svg></a>` : ''}
+  `;
+  return card;
+}
+
+function renderProjectLists() {
+  // preview on home: show first 3 (pinned)
+  if (projectPreviewBoard) projectPreviewBoard.innerHTML = '';
+  if (projectsRouteBoard) projectsRouteBoard.innerHTML = '';
+
+  projects.slice(0, 3).forEach(p => {
+    const c = createProjectCard(p);
+    if (projectPreviewBoard) projectPreviewBoard.appendChild(c);
+    // ensure the preview cards get the reveal animation
+    ro.observe(c);
+  });
+
+  projects.forEach(p => {
+    const c = createProjectCard(p);
+    c.classList.remove('on');
+    if (projectsRouteBoard) projectsRouteBoard.appendChild(c);
+    ro.observe(c);
+  });
+
+  bindCursorTargets();
+}
+
 const nav = document.getElementById('nav');
 const prog = document.getElementById('scroll-prog');
 const dot = document.getElementById('cur-dot');
@@ -335,14 +432,8 @@ function renderBlogLists() {
 }
 
 function renderProjectsRoute() {
-  projectsRouteBoard.innerHTML = '';
-  const cards = [...projectPreviewBoard.children].map(card => card.cloneNode(true));
-  cards.forEach(card => {
-    card.classList.remove('on');
-    projectsRouteBoard.appendChild(card);
-    ro.observe(card);
-  });
-  bindCursorTargets();
+  // Use the canonical `projects` array to render the full projects list.
+  renderProjectLists();
 }
 
 function hideAllViews() {
@@ -524,6 +615,7 @@ async function init() {
   setTimeout(typeTerminal, 700);
   await enrichPosts();
   renderBlogLists();
+  renderProjectLists();
   await renderRoute();
 
   if (location.hash && normalizePath(location.pathname) === '/') {
